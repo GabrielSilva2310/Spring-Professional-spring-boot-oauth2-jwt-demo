@@ -3,11 +3,14 @@ package com.devsuperior.demo.entities;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.devsuperior.demo.projections.UserDetailsProjection;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -47,6 +50,14 @@ public class User implements UserDetails {
         this.name = name;
         this.email = email;
         this.password = password;
+    }
+    
+    public User(List<UserDetailsProjection> projections) {
+    	this.email=projections.get(0).getUsername();
+    	this.password=projections.get(0).getPassword();
+    	for(UserDetailsProjection projection: projections) {
+    		roles.add(new Role(projection.getRoleId(), projection.getAuthority()));
+    	}
     }
 
     public Long getId() {
